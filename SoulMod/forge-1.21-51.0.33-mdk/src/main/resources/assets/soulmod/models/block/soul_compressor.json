@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "soulmod:block/soul_compressor_top",
+    "bottom": "soulmod:block/soul_compressor_bottom",
+    "side": "soulmod:block/soul_compressor_side"
+  }
+}

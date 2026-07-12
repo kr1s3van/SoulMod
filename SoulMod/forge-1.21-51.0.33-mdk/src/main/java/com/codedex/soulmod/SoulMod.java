@@ -1,5 +1,6 @@
 package com.codedex.soulmod;
 
+import com.codedex.soulmod.block.ModBlocks;
 import com.codedex.soulmod.item.ModItems;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,8 +37,9 @@ public class SoulMod
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-
         ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
+
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
 
@@ -59,6 +61,10 @@ public class SoulMod
 
         if (event.getTabKey() == CreativeModeTabs.COMBAT) {
             event.accept(ModItems.SOUL_STAFF);
+        }
+
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(ModBlocks.SOUL_COMPRESSOR);
         }
     }
 

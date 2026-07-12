@@ -7,7 +7,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModItems {
-    // On crée le registre d'items. Le MODID doit être "soulmod"
+    // On crée le registre d'items.
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, SoulMod.MOD_ID);
 
@@ -19,7 +19,7 @@ public class ModItems {
 
     // Soul Staff
     public static final RegistryObject<Item> SOUL_STAFF = ITEMS.register("soul_staff",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new SoulStaffItem(new Item.Properties().stacksTo(1).durability(100)));
 
 
     // La méthode pour enregistrer tout ça au démarrage du jeu
