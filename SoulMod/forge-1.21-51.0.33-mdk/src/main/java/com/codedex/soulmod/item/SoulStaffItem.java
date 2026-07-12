@@ -19,23 +19,37 @@ public class SoulStaffItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
 
-        // On ne lance le projectile que sur le Serveur (logique de jeu)
-        if (!level.isClientSide) {
-            Vec3 lookDirection = player.getLookAngle();
+        // 1. On cherche si le joueur a de la Soul Dust (ou s'il est en Créatif)
+        boolean hasAmmo = player.getAbilities().instabuild || player.getInventory().contains(new ItemStack(ModItems.SOUL_DUST.get()));
 
-            // En 1.21, constructeur prend (Level, Shooter, MovementVector)
-            SmallFireball fireball = new SmallFireball(level, player, lookDirection);
+        if (hasAmmo) {
+            if (!level.isClientSide) {
+                // 2. Logique de tir (le code qu'on a déjà fait)
+                Vec3 lookDirection = player.getLookAngle();
+                SmallFireball fireball = new SmallFireball(level, player, lookDirection);
+                fireball.setPos(player.getX(), player.getEyeY(), player.getZ());
+                level.addFreshEntity(fireball);
 
-            // On ajuste la position pour que ça sorte des yeux du joueur
-            fireball.setPos(player.getX(), player.getEyeY(), player.getZ());
+                // 3. ON CONSOMME LA POUSSIÈRE (uniquement en survie)
+                if (!player.getAbilities().instabuild) {
+                    // On cherche l'item dans l'inventaire et on en retire 1
+                    for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                        ItemStack invStack = player.getInventory().getItem(i);
+                        if (invStack.is(ModItems.SOUL_DUST.get())) {
+                            invStack.shrink(1); // Retire 1 de la pile
+                            break; // On arrête de chercher une fois qu'on a trouvé
+                        }
+                    }
+                }
 
-            level.addFreshEntity(fireball);
+                // 4. Temps de recharge
+                player.getCooldowns().addCooldown(this, 10);
+            }
 
-            // Cooldown de 1 seconde
-            player.getCooldowns().addCooldown(this, 20);
-
+            return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
+        } else {
+            // 5. Si pas de poussière, on ne fait rien (ou on pourrait jouer un petit son de "clic" vide)
+            return InteractionResultHolder.fail(itemstack);
         }
-
-        return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
     }
 }
