@@ -1,6 +1,7 @@
 package com.codedex.soulmod;
 
 import com.codedex.soulmod.block.ModBlocks;
+import com.codedex.soulmod.blockentity.ModBlockEntities;
 import com.codedex.soulmod.item.ModItems;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,6 +40,7 @@ public class SoulMod
         MinecraftForge.EVENT_BUS.register(this);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);

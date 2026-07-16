@@ -1,8 +1,58 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "top": "soulmod:block/soul_compressor_top",
-    "bottom": "soulmod:block/soul_compressor_bottom",
-    "side": "soulmod:block/soul_compressor_side"
-  }
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "soulmod:block/soul_compressor_top",
+		"1": "soulmod:block/soul_compressor_bottom",
+		"2": "soulmod:block/soul_compressor_side",
+		"particle": "soulmod:block/soul_compressor_side"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [4, 3.5, 12, 11.5], "texture": "#2"},
+				"east": {"uv": [4, 3.5, 12, 11.5], "texture": "#2"},
+				"south": {"uv": [4, 3.5, 12, 11.5], "texture": "#2"},
+				"west": {"uv": [4, 3.5, 12, 11.5], "texture": "#2"},
+				"up": {"uv": [4, 3.5, 12, 11.5], "texture": "#0"},
+				"down": {"uv": [4, 3.5, 12, 11.5], "texture": "#1"}
+			}
+		}
+	],
+
+	"display": {
+		"gui": {
+			"rotation": [30, 225, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"ground": {
+			"rotation": [0, 0, 0],
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"thirdperson_handright": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_handright": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_handleft": {
+			"rotation": [0, 225, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.4, 0.4, 0.4]
+		}
+	}
 }
