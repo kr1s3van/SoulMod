@@ -19,8 +19,8 @@ public class SoulCompressorScreen extends AbstractContainerScreen<SoulCompressor
     public SoulCompressorScreen(SoulCompressorMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.imageWidth = 176;
-        this.imageHeight = 256;
-        this.inventoryLabelY = this.imageHeight - 114;
+        this.imageHeight = 166;
+        this.inventoryLabelY = this.imageHeight - 94;
     }
 
     @Override
@@ -34,27 +34,22 @@ public class SoulCompressorScreen extends AbstractContainerScreen<SoulCompressor
         // 1. DESSINER LE FOND GRIS
         guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
 
-        // 2. DESSINER LE FUEL
+        // 2. DESSINER LE FUEL (Fantôme bleu)
         if (menu.isLit()) {
-            int curFuelHeight = menu.getScaledLitTime(); // Hauteur de 0 à 33 pixels
-
-            // On dessine l'âme bleue par-dessus la grise
-            // La logique (33 - curFuelHeight) permet de remplir du bas vers le haut
+            int curFuelHeight = menu.getScaledLitTime();
             guiGraphics.blit(ACTIVE_TEXTURE,
-                    x + 13, y + 54 + (33 - curFuelHeight), // Position sur l'écran
-                    13, 54 + (33 - curFuelHeight),         // Position sur le fichier PNG
-                    25, curFuelHeight);                    // Taille à dessiner
+                    x + 13, y + 54 + (33 - curFuelHeight),
+                    13, 54 + (33 - curFuelHeight),
+                    25, curFuelHeight);
         }
 
-        // 3. DESSINER LA PROGRESSION
+        // 3. DESSINER LA PROGRESSION (Flèche bleue)
         if (menu.isCrafting()) {
-            int curProgressWidth = menu.getScaledProgress(); // Largeur de 0 à 41 pixels
-
-            // On dessine la flèche bleue par-dessus la grise
+            int curProgressWidth = menu.getScaledProgress();
             guiGraphics.blit(ACTIVE_TEXTURE,
-                    x + 58, y + 64,      // Position sur l'écran
-                    58, 64,              // Position sur le fichier PNG
-                    curProgressWidth, 24); // On ne dessine que la largeur actuelle (p)
+                    x + 58, y + 64,
+                    58, 64,
+                    curProgressWidth, 24);
         }
     }
 
@@ -62,6 +57,6 @@ public class SoulCompressorScreen extends AbstractContainerScreen<SoulCompressor
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         renderBackground(guiGraphics, mouseX, mouseY, delta);
         super.render(guiGraphics, mouseX, mouseY, delta);
-        renderTooltip(guiGraphics, mouseX, mouseY); // Affiche le nom des items au survol
+        renderTooltip(guiGraphics, mouseX, mouseY);
     }
 }

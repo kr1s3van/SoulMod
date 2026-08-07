@@ -2,10 +2,16 @@ package com.codedex.soulmod.blockentity;
 
 import com.codedex.soulmod.block.SoulCompressorBlock;
 import com.codedex.soulmod.item.ModItems;
+import com.codedex.soulmod.menu.SoulCompressorMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -20,8 +26,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SoulCompressorBlockEntity extends BlockEntity {
-    // Inventaire : 0 = Sable, 1 = Larme (Fuel), 2 = Sortie
+// On ajoute "implements MenuProvider" ici
+public class SoulCompressorBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(3) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -36,8 +42,8 @@ public class SoulCompressorBlockEntity extends BlockEntity {
     private int maxProgress = 200;
 
     // Variables de Fuel (Le fantôme)
-    private int litTime = 0;    // Temps de fuel restant
-    private int maxLitTime = 0; // Temps total donné par la dernière larme
+    private int litTime = 0;
+    private int maxLitTime = 0;
 
     protected final ContainerData data;
 
@@ -67,10 +73,27 @@ public class SoulCompressorBlockEntity extends BlockEntity {
 
             @Override
             public int getCount() {
-                return 4; // On synchronise 4 valeurs maintenant
+                return 4;
             }
         };
     }
+
+    // --- INTERFACE MENU ---
+
+    @Override
+    public Component getDisplayName() {
+        // Le titre qui apparaîtra sur ton interface
+        return Component.literal("Soul Compressor");
+    }
+
+    // renvoie d'une nouvelle instance du menu avec les données de progression
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+        return new SoulCompressorMenu(pContainerId, pPlayerInventory, this, this.data);
+    }
+
+    // LOGIQUE TICK ET CRAFT
 
     private boolean isBurning() {
         return this.litTime > 0;
@@ -81,7 +104,6 @@ public class SoulCompressorBlockEntity extends BlockEntity {
 
         boolean dirty = false;
 
-        // 1. Si la machine brûle, on consomme le fuel
         if (this.isBurning()) {
             this.litTime--;
             dirty = true;
@@ -89,18 +111,14 @@ public class SoulCompressorBlockEntity extends BlockEntity {
 
         ItemStack fuelStack = this.itemHandler.getStackInSlot(1);
 
-        // 2. Logique principale
         if (this.isBurning() || !fuelStack.isEmpty() && hasSoulInput()) {
-
-            // Si on ne brûle pas encore mais qu'on a une recette -> On consomme une larme !
             if (!this.isBurning() && hasRecipe()) {
-                this.litTime = 1600; // Une larme dure 80 secondes (assez pour 8 crafts)
+                this.litTime = 1600;
                 this.maxLitTime = this.litTime;
-                fuelStack.shrink(1); // On consomme la larme
+                fuelStack.shrink(1);
                 dirty = true;
             }
 
-            // Si on brûle et qu'on a la recette -> On avance la progression
             if (this.isBurning() && hasRecipe()) {
                 this.progress++;
                 if (this.progress >= this.maxProgress) {
@@ -113,7 +131,6 @@ public class SoulCompressorBlockEntity extends BlockEntity {
             }
         }
 
-        // 3. Mise à jour de l'apparence du bloc (LIT)
         if (pState.getValue(SoulCompressorBlock.LIT) != this.isBurning()) {
             pLevel.setBlock(pPos, pState.setValue(SoulCompressorBlock.LIT, this.isBurning()), 3);
             dirty = true;
@@ -139,14 +156,13 @@ public class SoulCompressorBlockEntity extends BlockEntity {
     }
 
     private void craftItem() {
-        // Consomme 5 sables
         this.itemHandler.extractItem(0, 5, false);
-        // Produit 1 poussière
         this.itemHandler.setStackInSlot(2, new ItemStack(ModItems.SOUL_DUST.get(),
                 this.itemHandler.getStackInSlot(2).getCount() + 1));
     }
 
-    // --- SAUVEGARDE ---
+    // SAUVEGARDE ET BOILERPLATE
+
     @Override
     protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
         super.saveAdditional(nbt, registries);
