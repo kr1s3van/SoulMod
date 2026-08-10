@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 public class SoulCompressorMenu extends AbstractContainerMenu {
     private final SoulCompressorBlockEntity blockEntity;
@@ -32,10 +33,30 @@ public class SoulCompressorMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
-            // Tes coordonnées "Pixel-Perfect" avec les points blancs
-            this.addSlot(new SlotItemHandler(handler, 0, 23, 13));  // Slot Sable (Haut)
-            this.addSlot(new SlotItemHandler(handler, 1, 23, 58)); // Slot Fuel (Bas)
-            this.addSlot(new SlotItemHandler(handler, 2, 131, 33)); // Slot Sortie (Droite)
+            // Slot Sable/Terre
+            this.addSlot(new SlotItemHandler(handler, 0, 23, 13) {
+                @Override
+                public boolean mayPlace(@NotNull ItemStack stack) {
+                    return stack.is(net.minecraft.world.item.Items.SOUL_SAND) ||
+                            stack.is(net.minecraft.world.item.Items.SOUL_SOIL);
+                }
+            });
+
+            // Slot Fuel
+            this.addSlot(new SlotItemHandler(handler, 1, 23, 58) {
+                @Override
+                public boolean mayPlace(@NotNull ItemStack stack) {
+                    return stack.is(net.minecraft.world.item.Items.GHAST_TEAR);
+                }
+            });
+
+            // Slot Sortie
+            this.addSlot(new SlotItemHandler(handler, 2, 131, 33) {
+                @Override
+                public boolean mayPlace(@NotNull ItemStack stack) {
+                    return false; // pas d'objets
+                }
+            });
         });
 
         addDataSlots(data);

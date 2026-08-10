@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SoulCompressorBlock extends Block implements EntityBlock {
+
     // 1. la propriété "Allumé" (LIT)
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
@@ -30,8 +31,10 @@ public class SoulCompressorBlock extends Block implements EntityBlock {
         super(BlockBehaviour.Properties.of()
                 .strength(5f)
                 .requiresCorrectToolForDrops()
-                .sound(SoundType.METAL));
-        // Par défaut, la machine est éteinte
+                .sound(SoundType.METAL)
+                .lightLevel(state -> state.getValue(LIT) ? 15 : 0));
+
+        // défaut: la machine est éteinte
         this.registerDefaultState(this.stateDefinition.any().setValue(LIT, false));
     }
 

@@ -1,5 +1,6 @@
 {
   "variants": {
-    "": { "model": "soulmod:block/soul_compressor" }
+    "lit=false": { "model": "soulmod:block/soul_compressor" },
+    "lit=true": { "model": "soulmod:block/soul_compressor_on" }
   }
 }

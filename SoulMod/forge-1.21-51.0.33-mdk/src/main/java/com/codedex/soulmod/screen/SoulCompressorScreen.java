@@ -20,13 +20,24 @@ public class SoulCompressorScreen extends AbstractContainerScreen<SoulCompressor
         super(menu, inventory, title);
         this.imageWidth = 176;
         this.imageHeight = 166;
+    }
 
-        // --- POSITION DES TEXTES ---
-        // Le titre "Soul Compressor" monte un peu
-        this.titleLabelY = 4;
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        float scale = 0.85f; // taille (85%)
 
-        // Le mot "Inventory" descend juste au-dessus des cases (84 - 11 = 73)
-        this.inventoryLabelY = 73;
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(scale, scale, scale);
+
+        // machine title
+        int titleY = 2;
+        guiGraphics.drawString(this.font, this.title, (int)(8 / scale), (int)(titleY / scale), 0x404040, false);
+
+        //inventory title
+        int inventoryY = 79;
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, (int)(8 / scale), (int)(inventoryY / scale), 0x404040, false);
+
+        guiGraphics.pose().popPose();
     }
 
     @Override
