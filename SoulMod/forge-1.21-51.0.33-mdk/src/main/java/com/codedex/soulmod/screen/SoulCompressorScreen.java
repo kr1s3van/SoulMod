@@ -20,7 +20,13 @@ public class SoulCompressorScreen extends AbstractContainerScreen<SoulCompressor
         super(menu, inventory, title);
         this.imageWidth = 176;
         this.imageHeight = 166;
-        this.inventoryLabelY = this.imageHeight - 94;
+
+        // --- POSITION DES TEXTES ---
+        // Le titre "Soul Compressor" monte un peu
+        this.titleLabelY = 4;
+
+        // Le mot "Inventory" descend juste au-dessus des cases (84 - 11 = 73)
+        this.inventoryLabelY = 73;
     }
 
     @Override
@@ -31,25 +37,18 @@ public class SoulCompressorScreen extends AbstractContainerScreen<SoulCompressor
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        // 1. DESSINER LE FOND GRIS
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 176, 166);
 
-        // 2. DESSINER LE FUEL (Fantôme bleu)
         if (menu.isLit()) {
-            int curFuelHeight = menu.getScaledLitTime();
-            guiGraphics.blit(ACTIVE_TEXTURE,
-                    x + 13, y + 54 + (33 - curFuelHeight),
-                    13, 54 + (33 - curFuelHeight),
-                    25, curFuelHeight);
+            int h = menu.getScaledLitTime();
+            guiGraphics.blit(ACTIVE_TEXTURE, x + 27, y + 37 + (12 - h),
+                    27, 37 + (12 - h)
+                    , 7, h, 176, 166);
         }
 
-        // 3. DESSINER LA PROGRESSION (Flèche bleue)
         if (menu.isCrafting()) {
-            int curProgressWidth = menu.getScaledProgress();
-            guiGraphics.blit(ACTIVE_TEXTURE,
-                    x + 58, y + 64,
-                    58, 64,
-                    curProgressWidth, 24);
+            int w = menu.getScaledProgress();
+            guiGraphics.blit(ACTIVE_TEXTURE, x + 73, y + 38, 73, 38, w, 12, 176, 166);
         }
     }
 

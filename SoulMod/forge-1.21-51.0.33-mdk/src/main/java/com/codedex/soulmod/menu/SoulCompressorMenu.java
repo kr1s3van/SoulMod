@@ -33,9 +33,9 @@ public class SoulCompressorMenu extends AbstractContainerMenu {
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
             // Tes coordonnées "Pixel-Perfect" avec les points blancs
-            this.addSlot(new SlotItemHandler(handler, 0, 18, 19));  // Slot Sable (Haut)
-            this.addSlot(new SlotItemHandler(handler, 1, 18, 106)); // Slot Fuel (Bas)
-            this.addSlot(new SlotItemHandler(handler, 2, 127, 62)); // Slot Sortie (Droite)
+            this.addSlot(new SlotItemHandler(handler, 0, 23, 13));  // Slot Sable (Haut)
+            this.addSlot(new SlotItemHandler(handler, 1, 23, 58)); // Slot Fuel (Bas)
+            this.addSlot(new SlotItemHandler(handler, 2, 131, 33)); // Slot Sortie (Droite)
         });
 
         addDataSlots(data);
@@ -92,14 +92,14 @@ public class SoulCompressorMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 7 + l * 18, 87 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(playerInventory, i, 7 + i * 18, 145));
         }
     }
 }
