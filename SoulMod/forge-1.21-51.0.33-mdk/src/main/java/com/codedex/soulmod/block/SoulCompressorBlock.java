@@ -64,7 +64,7 @@ public class SoulCompressorBlock extends Block implements EntityBlock {
         };
     }
 
-    // 5. Interaction : Clic droit pour ouvrir le menu (on le fera juste après)
+    // 5. Interaction : Clic droit pour ouvrir le menu
     @Override
     @NotNull
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
@@ -79,5 +79,33 @@ public class SoulCompressorBlock extends Block implements EntityBlock {
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, net.minecraft.util.RandomSource random) {
+        if (!state.getValue(LIT)) {
+            return;
+        }
+
+        // Coordonnées du centre du bloc
+        double x = (double)pos.getX() + 0.5D;
+        double y = (double)pos.getY() + 1.1D;
+        double z = (double)pos.getZ() + 0.5D;
+
+        // 1. Petit bruitage de fantome
+        if (random.nextDouble() < 0.1D) {
+            level.playLocalSound(x, y, z, net.minecraft.sounds.SoundEvents.SOUL_ESCAPE.value(),
+                    net.minecraft.sounds.SoundSource.BLOCKS, 0.5F, 1.0F, false);
+        }
+
+        // 2. Apparition des particules "SOUL" (les flammes bleues)
+        // On en fait apparaître entre 1 et 3.
+        for (int i = 0; i < random.nextInt(3) + 1; i++) {
+            level.addParticle(net.minecraft.core.particles.ParticleTypes.SOUL,
+                    x + (random.nextDouble() - 0.5D) * 0.4D, // Petit décalage aléatoire X
+                    y,
+                    z + (random.nextDouble() - 0.5D) * 0.4D, // Petit décalage aléatoire Z
+                    0.0D, 0.05D, 0.0D); // Elles montent lentement vers le haut
+        }
     }
 }
