@@ -1,5 +1,6 @@
 package com.codedex.soulmod.item;
 import com.codedex.soulmod.SoulMod;
+import com.codedex.soulmod.entity.ModEntities;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -21,6 +22,14 @@ public class ModItems {
     public static final RegistryObject<Item> SOUL_STAFF = ITEMS.register("soul_staff",
             () -> new SoulStaffItem(new Item.Properties().stacksTo(1).durability(100)));
 
+    // Gloomy Rune
+    public static final RegistryObject<Item> GLOOMY_RUNE = ITEMS.register("gloomy_rune",
+            () -> new Item(new Item.Properties()));
+
+    // Mourner spawn egg
+    public static final RegistryObject<Item> MOURNER_SPAWN_EGG = ITEMS.register("mourner_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.MOURNER,
+                    0x1e385a, 0x3de0f7, new Item.Properties()));
 
     // La méthode pour enregistrer tout ça au démarrage du jeu
     public static void register(IEventBus eventBus) {

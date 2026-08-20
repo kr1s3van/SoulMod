@@ -1,5 +1,8 @@
 {
   "item.soulmod.soul_dust": "Soul Dust",
   "item.soulmod.soul_staff": "Soul Staff",
-  "block.soulmod.soul_compressor": "Soul Compressor"
+  "block.soulmod.soul_compressor": "Soul Compressor",
+  "item.soulmod.gloomy_rune": "Gloomy Rune",
+  "item.soulmod.mourner_spawn_egg": "Mourner Spawn Egg",
+  "entity.soulmod.mourner": "Mourner"
 }
