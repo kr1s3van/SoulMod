@@ -2,6 +2,9 @@ package com.codedex.soulmod;
 
 import com.codedex.soulmod.block.ModBlocks;
 import com.codedex.soulmod.blockentity.ModBlockEntities;
+import com.codedex.soulmod.client.MournerModel;
+import com.codedex.soulmod.client.MournerRenderer;
+import com.codedex.soulmod.entity.ModEntities;
 import com.codedex.soulmod.item.ModItems;
 import com.codedex.soulmod.menu.ModMenuTypes;
 import com.codedex.soulmod.screen.SoulCompressorScreen;
@@ -9,6 +12,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -34,12 +38,14 @@ public class SoulMod {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
 
         // 2. Enregistrement des événements de chargement
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
         modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::recordAttributes); //record des charastéristiques du mourner
 
         // 3. Enregistrement sur le bus Forge global
         MinecraftForge.EVENT_BUS.register(this);
@@ -63,6 +69,9 @@ public class SoulMod {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(ModBlocks.SOUL_COMPRESSOR);
         }
+        if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(ModItems.MOURNER_SPAWN_EGG);
+        }
     }
 
     // CONFIGURATION CLIENT (Dit à Minecraft d'ouvrir la Screen quand on appelle le Menu)
@@ -81,7 +90,28 @@ public class SoulMod {
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
+        public static void onClientSetup(FMLClientSetupEvent event)
+        {
+            // (possible réglages client a venir)
         }
+
+        // generation du mourner dans le serv
+        // generation du mourner lui meme ( cube )
+        @SubscribeEvent
+        public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(MournerModel.LAYER_LOCATION, MournerModel::createBodyLayer);
+        }
+
+        // apply du skin du mourner
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(ModEntities.MOURNER.get(), MournerRenderer::new);
+        }
+    }
+
+    // liaison entre le mourner et ses attributs phys.
+    // comme ca l'event en haut peu utiliser ces infos pour les records en haut
+    private void recordAttributes(net.minecraftforge.event.entity.EntityAttributeCreationEvent event) {
+        event.put(ModEntities.MOURNER.get(), com.codedex.soulmod.entity.MournerEntity.createAttributes().build());
     }
 }
