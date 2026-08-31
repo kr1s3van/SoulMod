@@ -1,10 +1,11 @@
 package com.codedex.soulmod.entity;
 
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -21,24 +22,33 @@ public class MournerEntity extends Monster {
         // Priorité 0 : Ne pas couler si on est dans l'eau
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        // Priorité 1 : S'enfuit si un joueur approche à moins de 6 blocs (Il est peureux !)
-        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.2D));
+        // Priorité 1 : Cibler la personne qui attaque et se battre au corps à corps
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 
-        // Priorité 2 : Se balader au hasard
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        // Priorité 2 : S'enfuit si un joueur approche à moins de 6 blocs (Il est peureux !)
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.2D));
 
-        // Priorité 3 : Regarder le joueur quand il est proche
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        // Priorité 3 : Se balader au hasard
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
 
-        // Priorité 4 : Regarder autour de soi
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        // Priorité 4 : Regarder le joueur quand il est proche
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+
+        // Priorité 5 : Regarder autour de soi
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+    }
+
+    // méthode qui sert au Renderer pour savoir quelle texture afficher (si le mob a une target, on lui met le skin faché)
+    public boolean isAngry() {
+        return this.getTarget() != null;
     }
 
     // mob stats
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0D)   // 10 coeurs de vie
-                .add(Attributes.MOVEMENT_SPEED, 0.2D) // Vitesse de déplacement
-                .add(Attributes.ATTACK_DAMAGE, 4.0D); // 2 coeurs de dégâts
+                .add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.2D)
+                .add(Attributes.ATTACK_DAMAGE, 4.0D);
     }
 }
