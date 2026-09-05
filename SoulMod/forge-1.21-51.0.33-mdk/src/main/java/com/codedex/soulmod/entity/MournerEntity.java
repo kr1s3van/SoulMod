@@ -6,14 +6,42 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class MournerEntity extends Monster {
-    // créatrion du mob
+    // On crée la "Clé" pour le haut-parleur
+    private static final EntityDataAccessor<Boolean> ANGRY =
+            SynchedEntityData.defineId(MournerEntity.class, EntityDataSerializers.BOOLEAN);
+
     public MournerEntity(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    // On initialise le haut-parleur au démarrage du mob
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ANGRY, false); // Par défaut, pas fâché
+    }
+
+    // On force la mise à jour quand la cible change
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        // On met à jour le haut-parleur : si target n'est pas null, on est fâché
+        this.entityData.set(ANGRY, target != null);
+    }
+
+    // 4. On modifie isAngry pour qu'il écoute le haut-parleur
+    public boolean isAngry() {
+        return this.entityData.get(ANGRY);
     }
 
     // LE CERVEAU
@@ -37,11 +65,6 @@ public class MournerEntity extends Monster {
 
         // Priorité 5 : Regarder autour de soi
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-    }
-
-    // méthode qui sert au Renderer pour savoir quelle texture afficher (si le mob a une target, on lui met le skin faché)
-    public boolean isAngry() {
-        return this.getTarget() != null;
     }
 
     // mob stats

@@ -6,13 +6,17 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MournerRenderer extends MobRenderer<MournerEntity, MournerModel<MournerEntity>> {
 
     // Le lien vers la texture PNG (Skin)
-    private static final ResourceLocation TEXTURE =
+    private static final ResourceLocation NORMAL_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(SoulMod.MOD_ID, "textures/entity/mourner.png");
+
+    private static final ResourceLocation ANGRY_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(SoulMod.MOD_ID, "textures/entity/mourner_angry.png");
 
     // skin sur le model 3D
     public MournerRenderer(EntityRendererProvider.Context context) {
@@ -20,13 +24,17 @@ public class MournerRenderer extends MobRenderer<MournerEntity, MournerModel<Mou
     }
 
     @Override
+    @NotNull
     public ResourceLocation getTextureLocation(MournerEntity entity) {
-        return TEXTURE;
+        if (entity.isAngry()) {
+            return ANGRY_TEXTURE;
+        }
+        return NORMAL_TEXTURE;
     }
 
     @Nullable
-    @Override // j ai modif cette fonction de base de forge pour quelle puisse lire la valeur alpha (l opacité) de chaque pixel
+    @Override
     protected RenderType getRenderType(MournerEntity animatable, boolean p_115323_, boolean p_115324_, boolean p_115325_) {
-        return RenderType.entityTranslucent(TEXTURE);
+        return RenderType.entityTranslucent(this.getTextureLocation(animatable));
     }
 }
