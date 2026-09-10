@@ -20,6 +20,15 @@ public class ModEntities {
                             .sized(0.6f, 1.2f)
                             .build("mourner"));
 
+    // Déclaration du Projectile
+    public static final RegistryObject<EntityType<MournerFireball>> MOURNER_FIREBALL =
+            ENTITY_TYPES.register("mourner_fireball",
+                    () -> EntityType.Builder.<MournerFireball>of(MournerFireball::new, MobCategory.MISC)
+                            .sized(0.3125f, 0.3125f) // Taille de la hitbox d'une shulker bullet
+                            .clientTrackingRange(8)   // Distance à laquelle le joueur peut la voir
+                            .updateInterval(1)        // Mise à jour ultra fluide (chaque tick)
+                            .build("mourner_fireball"));
+
     // Liaison mod
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

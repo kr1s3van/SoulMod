@@ -102,10 +102,11 @@ public class SoulMod {
             event.registerLayerDefinition(MournerModel.LAYER_LOCATION, MournerModel::createBodyLayer);
         }
 
-        // apply du skin du mourner
+        // apply du skin du mourner et de l'apparance de la charge au projectile
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.MOURNER.get(), MournerRenderer::new);
+            event.registerEntityRenderer(ModEntities.MOURNER_FIREBALL.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         }
     }
 
