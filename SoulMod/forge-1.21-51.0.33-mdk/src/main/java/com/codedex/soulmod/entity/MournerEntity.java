@@ -13,9 +13,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
 
-public class MournerEntity extends Monster {
+public class MournerEntity extends Monster implements RangedAttackMob {
     // On crée la "Clé" pour le haut-parleur
     private static final EntityDataAccessor<Boolean> ANGRY =
             SynchedEntityData.defineId(MournerEntity.class, EntityDataSerializers.BOOLEAN);
@@ -65,6 +68,30 @@ public class MournerEntity extends Monster {
 
         // Priorité 5 : Regarder autour de soi
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+    }
+
+    // L'attaque a distance
+    @Override
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        if (!this.level().isClientSide) {
+            // Flamme Gauche (Part vers l'axe X)
+            MournerFireball fireballLeft = new MournerFireball(this.level(), this, target, Direction.Axis.X);
+            fireballLeft.setPos(this.getX() - 0.8D, this.getY() + 0.5D, this.getZ());
+            this.level().addFreshEntity(fireballLeft);
+
+            // Flamme Droite (Part vers l'axe Z)
+            MournerFireball fireballRight = new MournerFireball(this.level(), this, target, Direction.Axis.Z);
+            fireballRight.setPos(this.getX() + 0.8D, this.getY() + 0.5D, this.getZ());
+            this.level().addFreshEntity(fireballRight);
+
+            // Flamme Haute (Part vers le ciel, axe Y)
+            MournerFireball fireballTop = new MournerFireball(this.level(), this, target, Direction.Axis.Y);
+            fireballTop.setPos(this.getX(), this.getY() + 1.2D, this.getZ());
+            this.level().addFreshEntity(fireballTop);
+
+            // Son de tir
+            this.playSound(SoundEvents.BLAZE_SHOOT, 1.0F, 1.5F);
+        }
     }
 
     // mob stats
