@@ -14,6 +14,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
@@ -53,21 +54,24 @@ public class MournerEntity extends Monster implements RangedAttackMob {
         // Priorité 0 : Ne pas couler si on est dans l'eau
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        // Priorité 1 : Cibler la personne qui attaque et se battre au corps à corps
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
+        // Priorité 1 : attaque a distance (Tire les 3 flammes bleues !)
+        this.goalSelector.addGoal(1, new RangedAttackGoal(this, 1.2D, 60, 16.0F));
+
+        // Priorité 2 : Corps-à-corps si le joueur est collé à lui
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, false));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 
-        // Priorité 2 : S'enfuit si un joueur approche à moins de 6 blocs (Il est peureux !)
-        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.2D));
+        // Priorité 3 : S'enfuit si un joueur approche à moins de 6 blocs (quand il est calme)
+        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.2D));
 
-        // Priorité 3 : Se balader au hasard
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        // Priorité 4 : Se balader au hasard
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
 
-        // Priorité 4 : Regarder le joueur quand il est proche
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        // Priorité 5 : Regarder le joueur
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
 
-        // Priorité 5 : Regarder autour de soi
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        // Priorité 6 : Regarder autour
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     }
 
     // L'attaque a distance
