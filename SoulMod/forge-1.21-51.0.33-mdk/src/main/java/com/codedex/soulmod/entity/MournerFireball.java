@@ -19,31 +19,49 @@ public class MournerFireball extends ShulkerBullet {
         super(level, shooter, target, axis);
     }
 
-    //  Définition des degats et effets de la charge de shulker modifié (j ai enlevé le super pour ne pas recuperer ses propriétés)
+    // Définition des degats, de l'explosion de l'impact et effets de la charge de shulker modifié (j ai enlevé le super pour ne pas recuperer ses propriétés)
     @Override
     protected void onHitEntity(EntityHitResult result) {
         net.minecraft.world.entity.Entity target = result.getEntity();
         net.minecraft.world.entity.Entity owner = this.getOwner();
 
-        // On applique les dégâts (4 points = 2 cœurs)
         DamageSource source = this.damageSources().indirectMagic(this, owner != null ? owner : this);
         if (target.hurt(source, 4.0F) && target instanceof LivingEntity livingTarget) {
-            livingTarget.igniteForSeconds(5.0F);
+            livingTarget.igniteForSeconds(5.0F); // Enflamme la cible
+        }
+
+        // Effet d'impact: gerbe de flammes bleues quand ça touche
+        if (this.level().isClientSide) {
+            for (int i = 0; i < 12; i++) {
+                this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME,
+                        this.getX(), this.getY(), this.getZ(),
+                        (this.random.nextDouble() - 0.5) * 0.3,
+                        (this.random.nextDouble() - 0.5) * 0.3,
+                        (this.random.nextDouble() - 0.5) * 0.3);
+            }
         }
     }
 
-    // visuel de la charge
+    // 2. effet visuel en vol (La Comète Bleue)
     @Override
     public void tick() {
         super.tick();
 
-        // ici, on fait apparaître des particules de Soul Fire pendant que le projectile vole
         if (this.level().isClientSide) {
-            for(int i = 0; i < 2; i++) {
+            // A. Projectile core (amas compact de flammes bleues)
+            for (int i = 0; i < 6; i++) {
+                double offsetX = (this.random.nextDouble() - 0.5) * 0.25;
+                double offsetY = (this.random.nextDouble() - 0.5) * 0.25;
+                double offsetZ = (this.random.nextDouble() - 0.5) * 0.25;
                 this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME,
-                        this.getX(), this.getY() + 0.2, this.getZ(),
+                        this.getX() + offsetX, this.getY() + 0.15 + offsetY, this.getZ() + offsetZ,
                         0, 0, 0);
             }
+
+            // B. La Traînée durable d'âmes qui flottent derrière
+            this.level().addParticle(ParticleTypes.SOUL,
+                    this.getX(), this.getY() + 0.15, this.getZ(),
+                    0, 0.02, 0);
         }
     }
 }
