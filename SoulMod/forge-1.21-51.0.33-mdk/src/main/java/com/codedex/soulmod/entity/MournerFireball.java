@@ -19,6 +19,12 @@ public class MournerFireball extends ShulkerBullet {
         super(level, shooter, target, axis);
     }
 
+    // Force le jeu à reconnaître NOTRE projectile (indique au jeu de charger le type mournerfireball quand le mourner invoque son projectile au lieu du shulker type) ---
+    @Override
+    public EntityType<?> getType() {
+        return ModEntities.MOURNER_FIREBALL.get();
+    }
+
     // Définition des degats, de l'explosion de l'impact et effets de la charge de shulker modifié (j ai enlevé le super pour ne pas recuperer ses propriétés)
     @Override
     protected void onHitEntity(EntityHitResult result) {
@@ -27,7 +33,7 @@ public class MournerFireball extends ShulkerBullet {
 
         DamageSource source = this.damageSources().indirectMagic(this, owner != null ? owner : this);
         if (target.hurt(source, 4.0F) && target instanceof LivingEntity livingTarget) {
-            livingTarget.igniteForSeconds(5.0F); // Enflamme la cible
+            livingTarget.igniteForSeconds(4.0F); // Enflamme pendant 4s
         }
 
         // Effet d'impact: gerbe de flammes bleues quand ça touche
