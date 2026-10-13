@@ -54,8 +54,23 @@ public class MournerEntity extends Monster implements RangedAttackMob {
         // Priorité 0 : Ne pas couler si on est dans l'eau
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        // Priorité 1 : attaque a distance (Tire les 3 flammes bleues !)
-        this.goalSelector.addGoal(1, new RangedAttackGoal(this, 1.2D, 60, 16.0F));
+        // Priorité 1 : attaque a distance
+        this.goalSelector.addGoal(1, new RangedAttackGoal(this, 1.2D, 60, 16.0F) {
+
+            @Override
+            // condition de tire (que si la cible existe et qu'elle est à plus de 4 blocs (16.0 en distance))
+            public boolean canUse() {
+                LivingEntity target = MournerEntity.this.getTarget();
+                return super.canUse() && target != null && MournerEntity.this.distanceToSqr(target) >= 16.0D;
+            }
+
+            @Override
+            // Si le joueur s'approche à moins de 4 blocs, on arrête l'attaque a distance
+            public boolean canContinueToUse() {
+                LivingEntity target = MournerEntity.this.getTarget();
+                return super.canContinueToUse() && target != null && MournerEntity.this.distanceToSqr(target) >= 16.0D;
+            }
+        });
 
         // Priorité 2 : Corps-à-corps si le joueur est collé à lui
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, false));
